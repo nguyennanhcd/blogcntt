@@ -1,15 +1,17 @@
+// components/PostDetailLayout.tsx
+'use client'
+
 import { ArrowLeft, Calendar, Clock, User } from 'lucide-react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import Image from 'next/image'
+import { ReactNode } from 'react'
 
-interface Post {
-  id: number
+export interface Frontmatter {
   title: string
   excerpt: string
-  content: string
   category: string
   date: string
   readTime: string
@@ -17,11 +19,18 @@ interface Post {
   image?: string
 }
 
-interface PostDetailProps {
-  post: Post
+interface Props {
+  metadata: Frontmatter
+  children: ReactNode
 }
 
-export function PostDetail({ post }: PostDetailProps) {
+export function PostDetailLayout({ metadata, children }: Props) {
+  const formatted = new Date(metadata.date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })
+
   return (
     <main className='min-h-screen bg-background'>
       <div className='max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
@@ -33,22 +42,23 @@ export function PostDetail({ post }: PostDetailProps) {
         </Link>
 
         <article>
+          {/* Header */}
           <div className='mb-8'>
             <div className='flex flex-wrap items-center gap-3 mb-4'>
-              <Badge>{post.category}</Badge>
+              <Badge>{metadata.category}</Badge>
               <span className='text-sm text-muted-foreground'>•</span>
               <span className='text-sm text-muted-foreground flex items-center gap-1'>
                 <Calendar size={14} />
-                {post.date}
+                {formatted}
               </span>
               <span className='text-sm text-muted-foreground flex items-center gap-1'>
                 <Clock size={14} />
-                {post.readTime}
+                {metadata.readTime}
               </span>
             </div>
 
             <h1 className='text-4xl md:text-5xl font-bold text-foreground mb-4 text-balance'>
-              {post.title}
+              {metadata.title}
             </h1>
 
             <div className='flex items-center gap-3 pt-4 border-t border-border'>
@@ -56,38 +66,40 @@ export function PostDetail({ post }: PostDetailProps) {
                 <User size={24} className='text-accent' />
               </div>
               <div>
-                <p className='font-medium text-foreground'>{post.author}</p>
+                <p className='font-medium text-foreground'>{metadata.author}</p>
                 <p className='text-sm text-muted-foreground'>
-                  Published {post.date}
+                  Published {formatted}
                 </p>
               </div>
             </div>
           </div>
 
-          {post.image && (
+          {/* Hero image */}
+          {metadata.image && (
             <div className='mb-8 rounded-lg overflow-hidden bg-muted h-96'>
               <Image
-                src={post.image || '/placeholder.svg'}
-                alt={post.title}
+                src={metadata.image}
+                alt={metadata.title}
+                width={1200}
+                height={600}
                 className='w-full h-full object-cover'
               />
             </div>
           )}
 
+          {/* Excerpt */}
           <Card className='mb-8 bg-muted/50 border-accent/20'>
             <CardContent className='pt-6'>
-              <p className='text-lg text-foreground italic'>{post.excerpt}</p>
+              <p className='text-lg text-foreground italic'>
+                {metadata.excerpt}
+              </p>
             </CardContent>
           </Card>
 
-          <div className='prose prose-invert max-w-none mb-12'>
-            <div className='text-foreground leading-relaxed space-y-6 text-base md:text-lg'>
-              {post.content.split('\n\n').map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
-              ))}
-            </div>
-          </div>
+          {/* MDX content */}
+          <div className='prose prose-invert max-w-none mb-12'>{children}</div>
 
+          {/* Share card */}
           <Card className='bg-muted/50 border-border'>
             <CardHeader>
               <h3 className='text-lg font-semibold text-foreground'>
