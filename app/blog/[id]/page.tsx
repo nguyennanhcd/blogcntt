@@ -1,4 +1,14 @@
-import Link from 'next/link'
+// app/posts/[id]/page.tsx
+import { notFound } from 'next/navigation'
+import { PostDetailLayout } from '@/components/PostDetailLayout'
+
+export const dynamicParams = false // 404 for unknown ids
+
+export async function generateStaticParams() {
+  // OPTIONAL: pre-render known posts at build time
+  // Return [] if you want fully dynamic (SSR) rendering
+  return []
+}
 
 export default async function PostPage({
   params
@@ -6,25 +16,26 @@ export default async function PostPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const { default: Post } = await import(`@/content/${id}.mdx`)
 
-  if (!Post) {
-    return (
-      <div className='min-h-screen bg-background flex items-center justify-center'>
-        <div className='text-center'>
-          <h1 className='text-4xl font-bold text-foreground mb-4'>
-            Post Not Found
-          </h1>
-          <p className='text-muted-foreground mb-8'>
-            The article you&lsquo;re looking for doesn&lsquo;t exist.
-          </p>
-          <Link href='/' className='text-accent hover:underline'>
-            Back to Articles
-          </Link>
-        </div>
-      </div>
-    )
+  let PostComponent
+  let metadata
+
+  try {
+    const mod = await import(`@/content/${id}.mdx`)
+    console.log(mod)
+    PostComponent = mod.default
+    console.log(PostComponent)
+    metadata = mod.metadata
+    console.log(metadata)
+  } catch {
+    notFound()
   }
 
-  return <Post />
+  if (!PostComponent || !metadata) notFound()
+
+  return (
+    <PostDetailLayout metadata={metadata}>
+      <PostComponent />
+    </PostDetailLayout>
+  )
 }
