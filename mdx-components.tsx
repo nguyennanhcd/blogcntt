@@ -1,21 +1,17 @@
-// mdx-components.tsx   (place next to app/ or in src/)
+// mdx-components.tsx
 import type { MDXComponents } from 'mdx/types'
-import Image from 'next/image'
-import { ImageProps } from 'next/image'
-
-const components = {
-  img: (props) => (
-    // eslint-disable-next-line jsx-a11y/alt-text
-    <Image
-      {...(props as ImageProps)}
-      sizes='(max-width: 768px) 100vw, 768px'
-      style={{ width: '100%', height: 'auto' }}
-      className='rounded-lg'
-    />
-  )
-  // you can add h1, h2, code, etc. here later
-} satisfies MDXComponents
 
 export function useMDXComponents(): MDXComponents {
-  return components
+  return {
+    pre: ({ children, ...props }) => (
+      <pre
+        {...props}
+        className='not-prose bg-gray-900 text-gray-100 p-4 rounded-xl overflow-x-auto text-sm my-6 shadow-lg border border-gray-800'
+        style={{ fontFamily: 'Fira Code, monospace' }}
+      >
+        {children}
+      </pre>
+    ),
+    code: ({ children }) => <code className='text-gray-100'>{children}</code>
+  }
 }

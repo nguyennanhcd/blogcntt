@@ -97,7 +97,9 @@ export function PostDetailLayout({ metadata, children }: Props) {
           </Card>
 
           {/* MDX content */}
-          <div className='prose prose-invert max-w-none mb-12'>{children}</div>
+          <div className='prose prose-invert max-w-none mb-12 prose-headings:text-5xl prose-headings:font-bold prose-headings:mt-12 prose-headings:mb-6'>
+            {children}
+          </div>
 
           {/* Share card */}
           <Card className='bg-muted/50 border-border'>
