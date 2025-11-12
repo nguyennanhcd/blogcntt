@@ -38,7 +38,7 @@ export function PostDetailLayout({ metadata, children }: Props) {
     <main className='min-h-screen bg-background'>
       <div className='max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
         <Link href='/'>
-          <Button variant='ghost' className='mb-8 -ml-2'>
+          <Button variant='ghost' className='mb-8 -ml-2 cursor-pointer'>
             <ArrowLeft size={20} className='mr-2' />
             Back to Articles
           </Button>
